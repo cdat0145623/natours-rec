@@ -10,6 +10,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
 const cookieSession = require("cookie-session");
 
 const toursRoute = require("./routes/toursRoutes");
@@ -19,7 +20,7 @@ const viewsRoute = require("./routes/viewsRoutes");
 const bookingRoute = require("./routes/bookingRoutes");
 const app = express();
 
-//Start aaaa
+//Start aaaa dsafdsafds
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "./public/views"));
 
@@ -143,6 +144,8 @@ app.use(
     ],
   })
 );
+
+app.use(compression());
 
 //Serving static files
 

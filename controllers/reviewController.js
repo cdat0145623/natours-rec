@@ -1,10 +1,10 @@
-const Review = require('../models/reviewModel');
-const factory = require('./handlerFactory');
+const Review = require("../models/reviewModel");
+const factory = require("./handlerFactory");
 // const catchAsync = require('../dev-data/utils/catchAsync');
 // const AppError = require('../dev-data/utils/appError');
 
 exports.setTourandId = (req, res, next) => {
-  console.log('5 set tour and Id');
+  // console.log('5 set tour and Id');
   if (!req.body.tour) {
     //confirm tour
     req.body.tour = req.params.tourId;
@@ -13,8 +13,8 @@ exports.setTourandId = (req, res, next) => {
     //confirm user
     req.body.user = req.user.id;
   }
-  console.log(req.body.tour);
-  console.log(req.body.user);
+  // console.log(req.body.tour);
+  // console.log(req.body.user);
   next();
 };
 

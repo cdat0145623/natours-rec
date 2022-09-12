@@ -1,41 +1,41 @@
-const crypto = require('crypto');
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcrypt');
+const crypto = require("crypto");
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 //name, email, photo, password, passwordConfirm
 const userSchema = mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please tell us your name!'],
+    required: [true, "Please tell us your name!"],
   },
   email: {
     type: String,
-    required: [true, 'Please provide your email!'],
+    required: [true, "Please provide your email!"],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
+    validate: [validator.isEmail, "Please provide a valid email"],
   },
-  photo: { type: String, default: 'default.jpg' },
+  photo: { type: String, default: "default.jpg" },
   role: {
     type: String,
-    value: ['user', 'guide', 'lead-guide', 'admin'],
+    value: ["user", "guide", "lead-guide", "admin"],
     // default: 'user'
   },
   password: {
     type: String,
-    required: [true, 'Please enter your password'],
+    required: [true, "Please enter your password"],
     minlength: 8,
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please enter confirm your password'],
+    required: [true, "Please enter confirm your password"],
     validate: {
       validator: function (el) {
         return el === this.password;
       },
-      message: 'Passwords are not the same! Please enter again password',
+      message: "Passwords are not the same! Please enter again password",
     },
   },
   passwordChangedAt: Date,
@@ -48,9 +48,9 @@ const userSchema = mongoose.Schema({
   },
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   //Only run this function if password was actually Modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified("password")) return next();
 
   //Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
@@ -71,7 +71,7 @@ userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
-  console.log(candidatePassword);
+  // console.log(candidatePassword);
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
@@ -80,7 +80,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10
     );
-    console.log(changedTimeStamp, JWTTimestamp);
+    // console.log(changedTimeStamp, JWTTimestamp);
     // console.log(JWTTimestamp, changedTimeStamp);
     return JWTTimestamp < changedTimeStamp;
   }
@@ -93,12 +93,12 @@ userSchema.pre(/^find/, function (next) {
 });
 
 userSchema.methods.createPasswordResetToken = async function () {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.passwordResetToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(resetToken)
-    .digest('hex');
+    .digest("hex");
 
   console.log({ resetToken }, this.passwordResetToken);
 
@@ -107,6 +107,6 @@ userSchema.methods.createPasswordResetToken = async function () {
   return resetToken;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

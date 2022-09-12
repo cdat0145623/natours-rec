@@ -1,15 +1,15 @@
-const Tour = require('../models/tourModels');
-const User = require('../models/userModels');
-const jwt = require('jsonwebtoken');
-const catchAsync = require('../dev-data/utils/catchAsync');
-const AppError = require('../dev-data/utils/appError');
-const Booking = require('../models/bookingModel');
-const factory = require('./handlerFactory');
+const Tour = require("../models/tourModels");
+const User = require("../models/userModels");
+const jwt = require("jsonwebtoken");
+const catchAsync = require("../dev-data/utils/catchAsync");
+const AppError = require("../dev-data/utils/appError");
+const Booking = require("../models/bookingModel");
+const factory = require("./handlerFactory");
 
-const stripe = require('stripe')(
-  'sk_test_51Lc2TPIFDKjBGOaxf9sdHlRDPY9nrMT2BIZ3PwA3i4Trj0iIJyGDvYSlVgAuvIF29IO1UW42VLJBHr1Ws3GXyxd900vzQnuI9E',
+const stripe = require("stripe")(
+  "sk_test_51Lc2TPIFDKjBGOaxf9sdHlRDPY9nrMT2BIZ3PwA3i4Trj0iIJyGDvYSlVgAuvIF29IO1UW42VLJBHr1Ws3GXyxd900vzQnuI9E",
   {
-    apiVersion: '2022-08-01',
+    apiVersion: "2022-08-01",
   }
 );
 
@@ -24,13 +24,13 @@ const stripe = require('stripe')(
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   //1) Get the currently booked tour
-  console.log('5');
-  console.log(req.params.tourId);
+  // console.log('5');
+  // console.log(req.params.tourId);
   const tour = await Tour.findById(req.params.tourId);
   //
   const jwt = req.cookies.jwt;
-  console.log(jwt);
-  console.log(req.user.email);
+  // console.log(jwt);
+  // console.log(req.user.email);
   // const decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
 
   // console.log(decoded);
@@ -40,17 +40,17 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
   //2) Create Checkout session
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${
+    payment_method_types: ["card"],
+    success_url: `${req.protocol}://${req.get("host")}/?tour=${
       req.params.tourId
     }&user=${req.user.id}&pice=${tour.price}`,
-    cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+    cancel_url: `${req.protocol}://${req.get("host")}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
     line_items: [
       {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
             name: `${tour.name}`,
             description: tour.summary,
@@ -61,7 +61,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         quantity: 1,
       },
     ],
-    mode: 'payment',
+    mode: "payment",
   });
 
   // name: `${tour.name}`,
@@ -73,7 +73,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   //3)
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     session,
   });
 });
@@ -89,9 +89,9 @@ exports.createBookingCheckout = async (req, res, next) => {
   if (!tour && !user && !price) {
     return next();
   }
-  console.log(req.originalUrl);
+  // console.log(req.originalUrl);
   await Booking.create({ tour, user, price });
-  res.redirect(req.originalUrl.split('?')[0]);
+  res.redirect(req.originalUrl.split("?")[0]);
 };
 
 exports.createBooking = factory.createOne(Booking);

@@ -1,7 +1,7 @@
-console.log("hello word");
+// console.log("hello word");
 
-setTimeout((cb) => {
-  console.log("Hello 2222");
-}, 0);
+// setTimeout((cb) => {
+//   console.log("Hello 2222");
+// }, 0);
 
-console.log("Bye");
+// console.log("Bye");

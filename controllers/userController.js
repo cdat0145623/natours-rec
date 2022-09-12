@@ -1,9 +1,9 @@
-const User = require('../models/userModels');
-const catchAsync = require('../dev-data/utils/catchAsync');
-const AppError = require('../dev-data/utils/appError');
-const factory = require('./handlerFactory');
-const sharp = require('sharp');
-const multer = require('multer');
+const User = require("../models/userModels");
+const catchAsync = require("../dev-data/utils/catchAsync");
+const AppError = require("../dev-data/utils/appError");
+const factory = require("./handlerFactory");
+const sharp = require("sharp");
+const multer = require("multer");
 
 // const upload = multer({ dest: 'starter/public/img/users' });
 
@@ -22,11 +22,11 @@ const multerStorage = multer.memoryStorage();
 
 //Filter image (chua toi uu)
 const multerFilter = (req, file, cb) => {
-  console.log(file.mimetype);
-  if (file.mimetype === 'image/jpeg') {
+  // console.log(file.mimetype);
+  if (file.mimetype === "image/jpeg") {
     cb(null, true);
   } else {
-    cb(new AppError('File is not image', 400), false);
+    cb(new AppError("File is not image", 400), false);
   }
 };
 
@@ -41,12 +41,12 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) {
     return next();
   }
-  console.log(req.user.id);
+  // req.user.id;
   req.file.filename = `user - ${req.user.id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
     .resize(500, 500)
-    .toFormat('jpeg')
+    .toFormat("jpeg")
     .jpeg({ quality: 90 })
     .toFile(`starter/public/img/users/${req.file.filename}`);
 
@@ -63,7 +63,7 @@ const filterObj = (obj, ...allowsFields) => {
   return newObj;
 };
 
-exports.uploadUserPhoto = upload.single('photo');
+exports.uploadUserPhoto = upload.single("photo");
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
@@ -71,20 +71,20 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.body);
+  // req.file;
+  // console.log(req.body);
   //1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
-        'This route is not for password update. Please use /updateMyPassword',
+        "This route is not for password update. Please use /updateMyPassword",
         400
       )
     );
   }
 
   //2) Filtered out unwanted fields names that are not allowed to be update
-  const filteredBody = filterObj(req.body, 'name', 'email');
+  const filteredBody = filterObj(req.body, "name", "email");
   // Add photo to filteredBody
   if (req.file) filteredBody.photo = req.file.filename;
   //3) Update document
@@ -93,7 +93,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       user: updateUser,
     },
@@ -103,7 +103,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
-    status: 'success',
+    status: "success",
     data: null,
   });
 });
@@ -112,8 +112,8 @@ exports.getAllUsers = factory.getAll(User);
 
 exports.createUser = (req, res) => {
   res.status(500).json({
-    status: 'error',
-    message: 'This route is not defined! Please use/signup instead!!!',
+    status: "error",
+    message: "This route is not defined! Please use/signup instead!!!",
   });
 };
 
