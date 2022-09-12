@@ -1,0 +1,21 @@
+extends base
+
+block content
+    main.main 
+        .login-form  
+            h2.heading-secondary.ma-bt-lg Review Form
+            form.form.form--review
+                .form__group
+                    label.form__label(for='review') Review 
+                    textarea#review.form__input(type='text' placeholder='Write something', required)
+                .form__group
+                    label.form__label(for='rating') Rating
+                    input#rating.form__input(type='numeric' placeholder='From 1 to 5', required)
+                .form__group
+                    //- a.btn.btn--red(href='/login') Cancel  
+                    if user 
+                        button.btn.btn--green.reviewBotton#review-tour(data-tour-id=`${tours.id}`) Submit  
+                    else 
+                        a.btn.btn--green.span-all-rows(href='/login') Log in to book tour
+
+
